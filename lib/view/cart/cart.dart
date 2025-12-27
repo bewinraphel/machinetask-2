@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:machinetask/core/constants.dart';
 
+import 'package:machinetask/view/cart/widget/cart_widget.dart';
+
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
@@ -9,50 +11,56 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       body: Padding(
         padding: EdgeInsetsGeometry.all(10),
-        child: Column(children: [ProceedButtonsection()]),
+        child: Column(
+          crossAxisAlignment: .center,
+          children: [
+            ProceedButtonsection(),
+            CheckBoxSection(),
+            SelectedItems(),
+            SeeMoreButton(),
+          ],
+        ),
       ),
     );
   }
 }
 
-class ProceedButtonsection extends StatelessWidget {
-  const ProceedButtonsection({super.key});
+class SeeMoreButton extends StatelessWidget {
+  const SeeMoreButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: .center,
+      crossAxisAlignment: .center,
       children: [
-        Text(
-          'Subtotal \$99.00',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 19,
-            wordSpacing: 1.4,
+        Padding(
+          padding: const EdgeInsets.only(left: 19),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.81,
+            child: Divider(thickness: 1, color: ColorConstants.black),
           ),
         ),
-        SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.only(left: 14),
-          child: Text.rich(
-            TextSpan(
-              text: 'EMI Available',
-              children: <InlineSpan>[
-                TextSpan(
-                  text: '     Details',
+        Container(
+          height: 36,
+          width: 150,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: ColorConstants.proceeedButton),
+            border: Border.all(color: ColorConstants.borderblack, width: 2),
+            borderRadius: BorderRadius.circular(20),
 
-                  style: TextStyle(
-                    color: ColorConstants.appbaraction,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
+            color: ColorConstants.white,
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 9, right: 9),
+              child: Text(
+                'See more like these',
+                style: TextStyle(fontSize: 13),
+              ),
             ),
           ),
         ),
-        SizedBox(
-          height: 20,
-          
-        )
       ],
     );
   }
