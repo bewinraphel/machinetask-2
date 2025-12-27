@@ -6,6 +6,8 @@ class ColorConstants {
   static const appbaraction = Color(0xFF66cc68);
   static const white = Color(0xFFffffff);
   static const black = Color(0xFF000000);
+
+  static const borderblack = Color(0xFFb4bec0);
   static const grey = Color(0xFFd9d9d9);
 
   static const red = Color(0xFFff0000);
@@ -19,4 +21,10 @@ class ColorConstants {
   static const bottomside = Color(0xFFfdd835);
 
   static const foccusedcolor = Color(0xFFffcd56);
+
+  static const doneButton = Color(0xFF005a0f);
+  static const List<Color> proceeedButton = [
+    Color(0xFFfed557),
+    Color(0xFFff9a4f),
+  ];
 }
