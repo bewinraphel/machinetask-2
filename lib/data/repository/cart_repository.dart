@@ -1,16 +1,25 @@
-import '../datasource/cart_db.dart';
-import '../models/cart_item_model.dart';
+import 'package:machinetask/data/datasource/product_database.dart';
+import 'package:machinetask/models/cart_item_model.dart';
+import 'package:machinetask/models/product_model.dart';
 
 class CartRepository {
-  Future<List<CartItemModel>> getCartItems() {
-    return CartDb.fetchItems();
+  Future<void> addToCart(ProductModel product) async {
+    await DBProductHelper.addToCart(product);
   }
 
-  Future<void> saveItem(CartItemModel item) {
-    return CartDb.insertItem(item);
+  Future<List<CartModel>> fetchCartItems() async {
+    return await DBProductHelper.fetchCart();
   }
 
-  Future<void> removeItem(int id) {
-    return CartDb.deleteItem(id);
+  Future<void> incrementQty(int productId) async {
+    await DBProductHelper.increment(productId);
+  }
+
+  Future<void> decrementQty(int productId) async {
+    await DBProductHelper.decrement(productId);
+  }
+
+  Future<int> getTotalAmount() async {
+    return await DBProductHelper.totalAmount();
   }
 }

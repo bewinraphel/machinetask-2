@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:machinetask/core/constants.dart';
 import 'package:machinetask/core/extension/custompaint.dart';
+ 
+import 'package:machinetask/models/product_model.dart';
 import 'package:machinetask/view/home/widget/widget.dart';
+import 'package:machinetask/viewmodel/cart_model.dart';
+ 
+import 'package:provider/provider.dart';
 
 class DetailedSection extends StatelessWidget {
-  const DetailedSection({super.key});
+  double height;
+  ProductModel product;
+  DetailedSection({super.key, this.height = 160, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +36,15 @@ class DetailedSection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ImagesSection(),
+                  ImagesSection(
+                    favourite: product.favourite,
+                    bestseller: product.bestseller,
+                    image: product.image1,
+                  ),
                   SizedBox(height: 3),
-                  TextSection(),
+                  TextSection(name: product.description),
                   SizedBox(height: 1),
-                  ButtonSection(),
+                  ButtonSection(price: product.price, product: product),
                 ],
               ),
             ),
@@ -46,7 +57,16 @@ class DetailedSection extends StatelessWidget {
 
 class ImagesSection extends StatelessWidget {
   double height;
-  ImagesSection({super.key, this.height = 0.25});
+  bool? favourite;
+  bool? bestseller;
+  String? image;
+  ImagesSection({
+    super.key,
+    this.height = 0.25,
+    required this.favourite,
+    required this.bestseller,
+    required this.image,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +108,7 @@ class ImagesSection extends StatelessWidget {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: AssetImage('assets/images/product1.jpeg'),
+                            image: AssetImage(image!),
                           ),
                         ),
                       ),
@@ -102,7 +122,12 @@ class ImagesSection extends StatelessWidget {
             flex: 5,
             child: Column(
               children: [
-                ImageSection(height: 200, image: 'assets/images/watch.jpg'),
+                ImageSection(
+                  height: 200,
+                  image: image,
+                  favorite: favourite,
+                  bestseller: bestseller,
+                ),
                 SizedBox(
                   height: 20,
                   child: ListView.separated(
@@ -168,7 +193,8 @@ class ImagesSection extends StatelessWidget {
 }
 
 class TextSection extends StatelessWidget {
-  const TextSection({super.key});
+  String name;
+  TextSection({super.key, required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -179,8 +205,8 @@ class TextSection extends StatelessWidget {
         height: height,
         child: DefaultTextStyle(
           style: TextStyle(),
-          child: const Text(
-            'Fastract revoltt FS1|1.83 Dislplay|BT Calling|Fastcharge|110+Spots Models|200+WatchFaces Smartwatch (Black Strap, Free Size)',
+          child: Text(
+            name,
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -198,7 +224,9 @@ class TextSection extends StatelessWidget {
 }
 
 class ButtonSection extends StatelessWidget {
-  const ButtonSection({super.key});
+  int price;
+  ProductModel product;
+  ButtonSection({super.key, required this.price, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -208,85 +236,112 @@ class ButtonSection extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ButtonsDetailSection(text: 'See all Deatils'),
+          ButtonsDetailSection(text: 'See all Deatils', onpress: () {}),
           SizedBox(height: 10),
-          ButtonsDetailSection(
-            text: '\$90.00',
-            textWeight: FontWeight.bold,
-            textSize: 20,
-            disabledColor: ColorConstants.foccusedcolor,
-            focusedColor: ColorConstants.foccusedcolor,
-            side: const WidgetStatePropertyAll(
-              BorderSide(color: ColorConstants.black, width: 2),
-            ),
-          ),
-          SizedBox(height: 10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                child: DefaultTextStyle(
-                  style: TextStyle(),
-                  child: Text(
-                    'Qty:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: ColorConstants.black,
-                      fontWeight: FontWeight.bold,
+          Consumer<CartViewModel>(
+            builder: (context, vm, _) {
+              final isAdded = vm.isInCart(product.id);
+              final quantity = vm.getProductQuantity(product.id);
+              final totalAmount = vm.getProductTotal(product.id);
+
+              return Column(
+                children: [
+                  ButtonsDetailSection(
+                    onpress: () {
+                      context.read<CartViewModel>().addToCart(product);
+                    },
+                    text: isAdded ? '\$$totalAmount' : 'Add to Cart',
+                    textWeight: FontWeight.bold,
+                    textSize: 20,
+                    disabledColor: ColorConstants.foccusedcolor,
+                    focusedColor: ColorConstants.foccusedcolor,
+                    side: const WidgetStatePropertyAll(
+                      BorderSide(color: ColorConstants.black, width: 2),
                     ),
                   ),
-                ),
-              ),
-              SizedBox(width: 13),
-              Container(
-                height: 25,
+                  SizedBox(height: 10),
 
-                width: 30,
-                decoration: BoxDecoration(
-                  color: ColorConstants.background,
-                  border: Border.all(
-                    color: ColorConstants.background,
-                    width: 1,
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.remove,
-                    color: ColorConstants.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(width: 13),
-              SizedBox(
-                child: DefaultTextStyle(
-                  style: TextStyle(),
-                  child: Text(
-                    '1',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: ColorConstants.black,
-                      fontWeight: FontWeight.bold,
+                  if (isAdded)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          child: DefaultTextStyle(
+                            style: TextStyle(),
+                            child: Text(
+                              'Qty:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: ColorConstants.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 13),
+                        GestureDetector(
+                          onTap: () {
+                            context.read<CartViewModel>().decrement(product.id);
+                          },
+                          child: Container(
+                            height: 25,
+
+                            width: 30,
+                            decoration: BoxDecoration(
+                              color: ColorConstants.background,
+                              border: Border.all(
+                                color: ColorConstants.background,
+                                width: 1,
+                              ),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.remove,
+                                color: ColorConstants.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 13),
+                        SizedBox(
+                          child: DefaultTextStyle(
+                            style: TextStyle(),
+                            child: Text(
+                              quantity.toString(),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: ColorConstants.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 13),
+                        GestureDetector(
+                          onTap: () {
+                            context.read<CartViewModel>().increment(product.id);
+                          },
+                          child: Container(
+                            height: 25,
+                            color: ColorConstants.background,
+                            width: 30,
+                            child: Center(
+                              child: Icon(
+                                Icons.add,
+                                color: ColorConstants.black,
+
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 13),
-              Container(
-                height: 25,
-                color: ColorConstants.background,
-                width: 30,
-                child: Center(
-                  child: Icon(
-                    Icons.add,
-                    color: ColorConstants.black,
-
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -298,16 +353,18 @@ class ButtonsDetailSection extends StatelessWidget {
   final double? height;
   final double? width;
   final String text;
+
   final FontWeight? textWeight;
   final double? textSize;
   final Color? disabledColor;
   final Color? focusedColor;
   final WidgetStateProperty<BorderSide?>? side;
-
-  const ButtonsDetailSection({
+  void Function()? onpress;
+  ButtonsDetailSection({
     super.key,
     this.height = 35,
     this.width = 240,
+    required this.onpress,
     required this.text,
     this.textWeight,
     this.textSize,
@@ -322,7 +379,7 @@ class ButtonsDetailSection extends StatelessWidget {
       height: height,
       width: width,
       child: OutlinedButton(
-        onPressed: () {},
+        onPressed: onpress,
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
             if (states.contains(WidgetState.disabled)) {

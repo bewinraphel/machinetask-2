@@ -1,68 +1,55 @@
-import 'package:flutter/material.dart';
-import 'package:machinetask/data/models/cart_item_model.dart';
+ import 'package:flutter/material.dart';
 import 'package:machinetask/data/repository/cart_repository.dart';
+import 'package:machinetask/models/cart_item_model.dart';
+import 'package:machinetask/models/product_model.dart';
  
 
 class CartViewModel extends ChangeNotifier {
-  final CartRepository _repo;
+  final CartRepository _repo = CartRepository();
 
-  CartViewModel(this._repo);
-
-  List<CartItemModel> _items = [];
-
-  List<CartItemModel> get cartItems =>
-      _items.where((e) => !e.savedForLater).toList();
-
-  List<CartItemModel> get savedItems =>
-      _items.where((e) => e.savedForLater).toList();
-
-  double get subtotal => cartItems.fold(
-        0,
-        (sum, item) => sum + item.price * item.quantity,
-      );
+  List<CartModel> cartItems = [];
+  int total = 0;
 
   Future<void> loadCart() async {
-    _items = await _repo.getCartItems();
+    cartItems = await _repo.fetchCartItems();
+    total = await _repo.getTotalAmount();
     notifyListeners();
   }
 
-  void addItem(CartItemModel item) {
-    final index = _items.indexWhere((e) => e.id == item.id);
-    if (index != -1) {
-      _items[index].quantity++;
-    } else {
-      _items.add(item);
-    }
-    _repo.saveItem(item);
-    notifyListeners();
+  Future<void> addToCart(ProductModel product) async {
+    await _repo.addToCart(product);
+    await loadCart();
   }
 
-  void increment(int id) {
-    final item = _items.firstWhere((e) => e.id == id);
-    item.quantity++;
-    _repo.saveItem(item);
-    notifyListeners();
+  Future<void> increment(int productId) async {
+    await _repo.incrementQty(productId);
+    await loadCart();
   }
 
-  void decrement(int id) {
-    final item = _items.firstWhere((e) => e.id == id);
-    if (item.quantity > 1) {
-      item.quantity--;
-      _repo.saveItem(item);
-      notifyListeners();
-    }
+  Future<void> decrement(int productId) async {
+    await _repo.decrementQty(productId);
+    await loadCart();
   }
+  bool isInCart(int productId) {
+  return cartItems.any((item) => item.productId == productId);
+}
+CartModel? getCartItem(int productId) {
+  try {
+    return cartItems.firstWhere(
+      (item) => item.productId == productId,
+    );
+  } catch (_) {
+    return null;
+  }
+}
 
-  void toggleSave(int id) {
-    final item = _items.firstWhere((e) => e.id == id);
-    item.savedForLater = !item.savedForLater;
-    _repo.saveItem(item);
-    notifyListeners();
-  }
+int getProductQuantity(int productId) {
+  return getCartItem(productId)?.quantity ?? 0;
+}
 
-  void deleteItem(int id) {
-    _items.removeWhere((e) => e.id == id);
-    _repo.removeItem(id);
-    notifyListeners();
-  }
+int getProductTotal(int productId) {
+  final item = getCartItem(productId);
+  return item == null ? 0 : item.price * item.quantity;
+}
+
 }

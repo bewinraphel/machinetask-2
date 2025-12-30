@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:machinetask/core/constants.dart';
+import 'package:machinetask/viewmodel/cart_model.dart';
+import 'package:provider/provider.dart';
 
 class Customappbar extends StatelessWidget implements PreferredSizeWidget {
   const Customappbar({super.key});
@@ -82,14 +84,20 @@ class Customappbar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Badge.count(
-                        count: 0,
-                        textColor: ColorConstants.black,
-                        textStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        backgroundColor: Colors.white,
+                      child: Consumer<CartViewModel>(
+                        builder: (context, value, child) {
+                          return Badge.count(
+                            count: value.cartItems.isEmpty
+                                ? 0
+                                : value.cartItems.length,
+                            textColor: ColorConstants.black,
+                            textStyle: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            backgroundColor: Colors.white,
+                          );
+                        },
                       ),
                     ),
                   ),
