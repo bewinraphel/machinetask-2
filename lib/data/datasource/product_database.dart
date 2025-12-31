@@ -224,7 +224,7 @@ class DBProductHelper {
     return result.map(ProductModel.fromMap).toList();
   }
 
-  // ADD TO CART
+ 
   static Future<void> addToCart(ProductModel product) async {
     final db = await database;
 
@@ -287,7 +287,7 @@ class DBProductHelper {
         [productId],
       );
     } else {
-      // Quantity == 1 → remove item from cart
+ 
       await db.delete('cart', where: 'productId = ?', whereArgs: [productId]);
     }
   }

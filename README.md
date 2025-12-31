@@ -1,17 +1,52 @@
-# machinetask
+ # 🚀 MachineTask – Flutter Application
 
-A new Flutter project.
+A clean and scalable Flutter application built as part of a **machine task**, following best practices in **state management, navigation, and local data persistence**.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📱 About the Project
 
-A few resources to get you started if this is your first Flutter project:
+**MachineTask** is a Flutter project designed to demonstrate:
+- Structured project setup
+- Local database handling
+- Secure data storage
+- Smooth navigation
+- Maintainable state management
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+ 
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# machinetask-2
+---
+
+## ✨ Features
+
+- 📦 **Local Database** using `sqflite`
+- 🔐 **Secure Storage** with `flutter_secure_storage`
+- 🧠 **State Management** using `Provider`
+- 🧭 **Navigation** powered by `go_router`
+- 🖼️ **Asset Management** for images
+- 🎯 Clean and readable code structure
+- 📱 Supports Android & iOS
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology | Usage |
+|---------|------|
+| **Flutter** | UI Framework |
+| **Dart** | Programming Language |
+| **Provider** | State Management |
+| **GoRouter** | App Navigation |
+| **Sqflite** | Local Database |
+| **Flutter Secure Storage** | Encrypted Storage |
+
+---
+
+## 📦 Dependencies
+
+```yaml
+provider: ^6.1.5+1
+go_router: ^17.0.0
+flutter_secure_storage: ^9.2.4
+sqflite: ^2.4.2
+path: ^1.9.1
